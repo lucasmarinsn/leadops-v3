@@ -1,0 +1,6 @@
+data/
+output/*.json
+output/*.csv
+.env
+*.sqlite
+*.sqlite-*

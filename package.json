@@ -1,0 +1,16 @@
+{
+  "name": "leadops",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "description": "LeadOps — workstation profissional multi-fonte com SQLite e fila de jobs",
+  "scripts": {
+    "start": "node src/server.mjs",
+    "dashboard": "node src/server.mjs",
+    "capture": "node src/capture.mjs",
+    "health": "node -e \"fetch('http://127.0.0.1:'+(process.env.PORT||4174)+'/api/health').then(r=>r.json()).then(j=>console.log(JSON.stringify(j,null,2)))\""
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

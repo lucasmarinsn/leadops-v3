@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: leadops
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 4174
+      - key: LEADS_DATA_DIR
+        value: /data
+      - key: LEADS_FORCE_SEED
+        value: "1"
+      - key: LEADS_LOG_LEVEL
+        value: info
+    disk:
+      name: leadops-data
+      mountPath: /data
+      sizeGB: 1

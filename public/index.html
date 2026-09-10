@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LeadOps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="rail">
+      <div class="brand">
+        <div class="mark">LO</div>
+        <div>
+          <strong>LeadOps</strong>
+          <small>Captura · Fila · Escala</small>
+        </div>
+      </div>
+      <nav class="nav">
+        <button type="button" class="nav-btn active" data-view="capture">Capturar</button>
+        <button type="button" class="nav-btn" data-view="progress" id="nav-progress" disabled>Progresso</button>
+        <button type="button" class="nav-btn" data-view="queue">Fila</button>
+        <button type="button" class="nav-btn" data-view="history">Histórico</button>
+      </nav>
+      <div class="rail-foot">
+        <span class="pill">v3 · SQLite</span>
+        <p>Fila de jobs · multi-fonte · escalavel</p>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="top-eyebrow">Workstation</p>
+          <h1 id="top-title">Nova captura</h1>
+        </div>
+        <div class="top-actions" id="top-actions"></div>
+      </header>
+
+      <section class="view active" id="view-capture">
+        <p class="lede">Captura <strong>multi-fonte gratuita</strong> (OpenStreetMap + Nominatim + busca web). Prioriza leads com telefone/site e script de <strong>sistemas sob medida</strong>.</p>
+        <div class="recent-card card hidden" id="recent-card"></div>
+        <div class="niche-grid" id="niche-grid"></div>
+        <form id="capture-form" class="capture-panel card">
+          <input type="hidden" id="niche" name="niche" value="imobiliaria" />
+          <div class="field-row">
+            <label>
+              <span>Cidade</span>
+              <input id="city" name="city" type="text" value="Porto Alegre" required />
+            </label>
+            <label>
+              <span>Quantidade</span>
+              <input id="limit" name="limit" type="number" min="5" max="120" value="30" />
+            </label>
+          </div>
+          <label>
+            <span>Nicho livre (opcional)</span>
+            <input id="niche-custom" type="text" placeholder="Se preencher, substitui o card selecionado" />
+          </label>
+          <div class="field-row sources-row">
+            <label class="check">
+              <input type="checkbox" id="src-osm" checked />
+              <span>OpenStreetMap</span>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="src-nominatim" checked />
+              <span>Nominatim</span>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="src-web" checked />
+              <span>Busca web</span>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="quality-mode" checked />
+              <span>Modo qualidade (só quem tem tel. ou site)</span>
+            </label>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn primary" id="btn-capture">Buscar leads bons</button>
+            <p class="hint" id="capture-hint">2–5 min. Busca 3× mais candidatos e filtra os melhores.</p>
+          </div>
+        </form>
+      </section>
+
+      <section class="view" id="view-progress">
+        <div class="card progress-card">
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          <div class="progress-meta">
+            <p class="progress-pct" id="progress-pct">0%</p>
+            <div>
+              <p class="progress-msg" id="progress-msg">Aguardando…</p>
+              <p class="progress-detail" id="progress-detail"></p>
+            </div>
+          </div>
+          <ol class="timeline" id="progress-steps">
+            <li data-step="geocode">Localizar cidade</li>
+            <li data-step="nominatim">Nominatim (tel/site)</li>
+            <li data-step="overpass">OpenStreetMap</li>
+            <li data-step="web">Busca web</li>
+            <li data-step="enrich">Extrair telefones</li>
+            <li data-step="qualify">Qualificar A / B / C</li>
+            <li data-step="done">Abrir fila</li>
+          </ol>
+          <p class="error hidden" id="progress-error"></p>
+          <button type="button" class="btn primary hidden" id="btn-go-qualify">Abrir fila</button>
+        </div>
+      </section>
+
+      <section class="view" id="view-queue">
+        <div class="kpi-row" id="kpi-row"></div>
+        <div class="queue-progress card" id="queue-progress"></div>
+        <div class="queue-layout">
+          <div class="queue-list-pane card">
+            <div class="toolbar">
+              <div class="filters" id="grade-filters">
+                <button type="button" class="chip active" data-grade="all">Todos</button>
+                <button type="button" class="chip" data-grade="focus">Ligar agora</button>
+                <button type="button" class="chip" data-grade="A">A</button>
+                <button type="button" class="chip" data-grade="B">B</button>
+                <button type="button" class="chip" data-grade="C">C</button>
+                <button type="button" class="chip" data-grade="phone">Com tel.</button>
+                <button type="button" class="chip" data-grade="todo">Na fila</button>
+                <button type="button" class="chip" data-grade="interested">Interessados</button>
+              </div>
+              <input id="search" type="search" placeholder="Buscar…" />
+            </div>
+            <p class="hotkeys">Atalhos: <kbd>J</kbd>/<kbd>K</kbd> navegar · <kbd>Enter</kbd> ligar · <kbd>1</kbd>–<kbd>7</kbd> status · <kbd>C</kbd> script</p>
+            <div class="lead-list" id="lead-list"></div>
+            <p class="empty hidden" id="queue-empty">Nenhum lead neste filtro.</p>
+          </div>
+          <aside class="detail-pane card" id="detail-pane">
+            <p class="empty" id="detail-empty">Selecione um lead na lista.</p>
+            <div class="detail hidden" id="detail-body"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-history">
+        <p class="lede">Lotes salvos em <code>output/</code>. Clique para abrir na fila.</p>
+        <div class="batch-list" id="batch-list"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
